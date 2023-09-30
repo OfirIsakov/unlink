@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import Depends, FastAPI
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, RedirectResponse
@@ -18,6 +20,25 @@ from unlink.url import PartialUrl, Url
 
 app = FastAPI()
 SHORTCUTS_DB: ShortcutsDB = MongoShortcutsDB(MONGO_CONNECTION_STRING)
+
+
+@app.get("/")
+async def stats_url(item: PartialUrl = Depends()):
+    expanded_response = SHORTCUTS_DB.get_url_stats(item)
+
+    if expanded_response == StatusCodes.NOT_EXIST:
+        return HTMLResponse(
+            f"{item.shortcut} Not Found", status_code=HTTP_404_NOT_FOUND
+        )
+
+    if expanded_response == StatusCodes.WRONG_OWNER:
+        return HTMLResponse(f"Wrong owner", status_code=HTTP_403_FORBIDDEN)
+
+    formated_visitors = [
+        (str(ip), time.isoformat()) for ip, time in expanded_response.visitors
+    ]
+
+    return HTMLResponse(f"{formated_visitors}")
 
 
 @app.get("/{shortcut}")

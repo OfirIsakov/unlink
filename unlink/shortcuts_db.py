@@ -36,3 +36,7 @@ class ShortcutsDB(ABC):
     @abstractmethod
     def log_entry(self, shortcut: str, user_ip: IPv4Address) -> None:
         raise NotImplemented()
+
+    @abstractmethod
+    def get_url_stats(self, url: PartialUrl) -> StatusCodes | StatisticsUrl:
+        raise NotImplemented()

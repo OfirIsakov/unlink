@@ -96,3 +96,14 @@ class MongoShortcutsDB(ShortcutsDB):
                 }
             },
         )
+
+    def get_url_stats(self, url: PartialUrl) -> StatusCodes | StatisticsUrl:
+        if not self.check_exists(url.shortcut):
+            return StatusCodes.NOT_EXIST
+
+        expanded_url = self.expand_url(url.shortcut)
+
+        if not expanded_url.owner == url.owner:
+            return StatusCodes.WRONG_OWNER
+
+        return expanded_url
