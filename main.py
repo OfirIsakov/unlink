@@ -14,7 +14,7 @@ from uvicorn import run
 from unlink.consts import MONGO_CONNECTION_STRING
 from unlink.mongo_shortcuts_db import MongoShortcutsDB
 from unlink.shortcuts_db import ShortcutsDB, StatusCodes
-from unlink.url import DeleteUrl, Url
+from unlink.url import PartialUrl, Url
 
 app = FastAPI()
 SHORTCUTS_DB: ShortcutsDB = MongoShortcutsDB(MONGO_CONNECTION_STRING)
@@ -22,13 +22,16 @@ SHORTCUTS_DB: ShortcutsDB = MongoShortcutsDB(MONGO_CONNECTION_STRING)
 
 @app.get("/{shortcut}")
 async def expand_url(request: Request, shortcut: str):
-    if not SHORTCUTS_DB.check_exists(shortcut):
+    expanded_response = SHORTCUTS_DB.expand_url(shortcut)
+
+    if not expanded_response:
         return HTMLResponse(
             f"{shortcut} Not Found", status_code=HTTP_404_NOT_FOUND
         )
 
+    SHORTCUTS_DB.log_entry(shortcut, request.client.host)
     return RedirectResponse(
-        SHORTCUTS_DB.expand_url(shortcut, request.client.host).url,
+        expanded_response.url,
         status_code=HTTP_303_SEE_OTHER,
     )
 
@@ -61,7 +64,7 @@ async def update_url(item: Url = Depends()):
 
 
 @app.delete("/delete")
-async def delete_url(item: DeleteUrl = Depends()):
+async def delete_url(item: PartialUrl = Depends()):
     delete_response = SHORTCUTS_DB.delete(item)
 
     if delete_response == StatusCodes.NOT_EXIST:

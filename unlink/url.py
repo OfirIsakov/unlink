@@ -11,7 +11,7 @@ class Url(BaseModel):
     owner: str
 
 
-class DeleteUrl(BaseModel):
+class PartialUrl(BaseModel):
     shortcut: str
     owner: str
 

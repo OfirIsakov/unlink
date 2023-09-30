@@ -3,7 +3,7 @@ from enum import IntEnum
 
 from ipaddress import IPv4Address
 
-from url import DeleteUrl, StatisticsUrl, Url
+from unlink.url import PartialUrl, StatisticsUrl, Url
 
 
 class StatusCodes(IntEnum):
@@ -14,9 +14,7 @@ class StatusCodes(IntEnum):
 
 class ShortcutsDB(ABC):
     @abstractmethod
-    def expand_url(
-        self, shortcut: str, user_ip: IPv4Address
-    ) -> StatisticsUrl | None:
+    def expand_url(self, shortcut: str) -> StatisticsUrl | None:
         raise NotImplemented()
 
     @abstractmethod
@@ -28,9 +26,13 @@ class ShortcutsDB(ABC):
         raise NotImplemented()
 
     @abstractmethod
-    def delete(self, url: DeleteUrl) -> StatusCodes:
+    def delete(self, url: PartialUrl) -> StatusCodes:
         raise NotImplemented()
 
     @abstractmethod
     def check_exists(self, shortcut: str) -> bool:
+        raise NotImplemented()
+
+    @abstractmethod
+    def log_entry(self, shortcut: str, user_ip: IPv4Address) -> None:
         raise NotImplemented()
