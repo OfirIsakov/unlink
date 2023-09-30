@@ -11,10 +11,10 @@ from starlette.status import (
 )
 from uvicorn import run
 
-from consts import MONGO_CONNECTION_STRING
-from mongo_shortcuts_db import MongoShortcutsDB
-from shortcuts_db import ShortcutsDB, StatusCodes
-from url import DeleteUrl, Url
+from unlink.consts import MONGO_CONNECTION_STRING
+from unlink.mongo_shortcuts_db import MongoShortcutsDB
+from unlink.shortcuts_db import ShortcutsDB, StatusCodes
+from unlink.url import DeleteUrl, Url
 
 app = FastAPI()
 SHORTCUTS_DB: ShortcutsDB = MongoShortcutsDB(MONGO_CONNECTION_STRING)

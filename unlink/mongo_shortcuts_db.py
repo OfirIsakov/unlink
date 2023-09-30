@@ -22,7 +22,7 @@ class MongoShortcutsDB(ShortcutsDB):
         ]
 
     def expand_url(
-        self, shortcut: str, user_ip: IPv4Address
+            self, shortcut: str, user_ip: IPv4Address
     ) -> StatisticsUrl | None:
         item = self.collection.find_one({STATISTICS_FIELD_SHORTCUT: shortcut})
 
